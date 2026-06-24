@@ -1,41 +1,43 @@
-from pathlib import Path
-import argparse
-import os
+import cv2
+import numpy as np
 
+# Load the image in grayscale
+img = cv2.imread("./processed_dataset/triangle/triangle_23.png", cv2.IMREAD_GRAYSCALE)
 
-DEFAULT_IMAGE = Path("processed_dataset") / "circle" / "circle_6.png"
+if img is None:
+    print("Error: Image not found or unable to load.")
+    exit()
 
+# Apply binary thresholding to convert the image to a binary image
+_, binary = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
 
-def get_test_image_path(image_path=DEFAULT_IMAGE):
-    """Return a valid image path for quick testing."""
-    path = Path(image_path)
+# Find contours in the binary image
+contours, _ = cv2.findContours(
+    binary, 
+    cv2.RETR_EXTERNAL, 
+    cv2.CHAIN_APPROX_SIMPLE)
 
-    if not path.is_absolute():
-        path = Path(__file__).resolve().parent / path
+# Select the largest contour based on area
+contour = max(contours, key=cv2.contourArea)
 
-    if not path.exists():
-        raise FileNotFoundError(f"Image not found: {path}")
+area = cv2.contourArea(contour)
+perimeter = cv2.arcLength(contour, True)
 
-    return path
+x,y,w,h = cv2.boundingRect(contour)
+aspect_ratio = float(w)/h
 
+circularity = (4 * np.pi * area) / (perimeter ** 2)
 
-def open_test_image(image_path=DEFAULT_IMAGE):
-    """Open an image with the system image viewer."""
-    path = get_test_image_path(image_path)
-    os.startfile(path)
-    return path
+epsilon = 0.02 * perimeter
+approx = cv2.approxPolyDP(contour, epsilon, True)
+vertices = len(approx)
 
+feature_vector = [
+    area, 
+    perimeter, 
+    aspect_ratio, 
+    circularity, 
+    vertices]
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Open a shape image for testing.")
-    parser.add_argument(
-        "image",
-        nargs="?",
-        default=DEFAULT_IMAGE,
-        help=f"Image path to open. Default: {DEFAULT_IMAGE}",
-    )
-    args = parser.parse_args()
-
-    opened_path = open_test_image(args.image)
-    print(f"Opened image: {opened_path}")
+print("Feature Vector:", feature_vector)
 
