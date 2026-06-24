@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Load the image in grayscale
-img = cv2.imread("./processed_dataset/triangle/triangle_23.png", cv2.IMREAD_GRAYSCALE)
+img = cv2.imread("./processed_dataset_split/test/triangle/triangle_1212.png", cv2.IMREAD_GRAYSCALE)
 
 if img is None:
     print("Error: Image not found or unable to load.")
