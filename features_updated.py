@@ -41,7 +41,6 @@ def extract_features(img_path):
     approx = cv2.approxPolyDP(contour, epsilon, True)
     vertices = len(approx)
 
-
     return [area, perimeter, aspect_ratio, circularity, vertices, *hu_moments]
 
 def load_dataset(path):
