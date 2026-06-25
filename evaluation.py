@@ -20,5 +20,7 @@ print(f"SVM accuracy is: {round(svm_acc * 100, 2)}%")
 print(classification_report(y_test, rf_pred))
 
 #Extra discussion
-print(f"The best model is Random Forest with {round(dt_acc * 100, 2)}%")
-print(f"The worst model is Decision Tree with {round(rf_acc * 100, 2)}%")
+best = max([("Decision Tree", dt_acc), ("Random Forest", rf_acc), ("SVM", svm_acc)], key=lambda x: x[1])
+worst = min([("Decision Tree", dt_acc), ("Random Forest", rf_acc), ("SVM", svm_acc)], key=lambda x: x[1])
+print(f"The best model is {best[0]} with {round(best[1] * 100, 2)}%")
+print(f"The worst model is {worst[0]} with {round(worst[1] * 100, 2)}%")
