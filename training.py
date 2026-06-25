@@ -1,4 +1,4 @@
-from features import X_train, y_train
+from features_updated import X_train, y_train
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier

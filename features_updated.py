@@ -8,7 +8,7 @@ def extract_features(img_path):
         print(f"Error: Image not found or unable to load: {img_path}")
         exit()
     # Apply binary thresholding to convert the image to a binary image
-    _, binary = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+    _, binary = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INVERSE)
 
     # Find contours in the binary image
     contours, _ = cv2.findContours(

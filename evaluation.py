@@ -1,5 +1,5 @@
 from sklearn.metrics import accuracy_score, classification_report
-from features import X_test, y_test
+from features_updated import X_test, y_test
 from training import dt, rf, svm
 
 #Prediction
