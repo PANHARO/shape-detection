@@ -17,7 +17,12 @@ print(f"Random Forest accuracy is: {round(rf_acc * 100, 2)}%")
 print(f"SVM accuracy is: {round(svm_acc * 100, 2)}%")
 
 #Report
+print("Classification Report(Random Forest):")
 print(classification_report(y_test, rf_pred))
+print("Classification Report(Decision Tree):")
+print(classification_report(y_test, dt_pred))
+print("Classification Report(SVM):")
+print(classification_report(y_test, svm_pred))
 
 #Extra discussion
 best = max([("Decision Tree", dt_acc), ("Random Forest", rf_acc), ("SVM", svm_acc)], key=lambda x: x[1])
