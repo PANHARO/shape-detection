@@ -1,6 +1,8 @@
 import cv2
 import os
 import numpy as np
+from sklearn.preprocessing import StandardScaler
+
 
 def extract_features(img_path):
     img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
@@ -60,3 +62,7 @@ def load_dataset(path):
 
 X_train, y_train = load_dataset("./processed_dataset_split/train")
 X_test, y_test   = load_dataset("./processed_dataset_split/test")
+#feature scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
