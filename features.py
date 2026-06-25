@@ -1,43 +1,60 @@
 import cv2
+import os
 import numpy as np
 
-# Load the image in grayscale
-img = cv2.imread("./processed_dataset_split/test/triangle/triangle_1212.png", cv2.IMREAD_GRAYSCALE)
+X_train, y_train = [], []
+TRAIN_PATH = "./processed_dataset_split/train"
 
-if img is None:
-    print("Error: Image not found or unable to load.")
-    exit()
+for class_name in os.listdir(TRAIN_PATH):
+    class_dir = os.path.join(TRAIN_PATH, class_name)
+    if not os.path.isdir(class_dir):
+        continue
+    for img_file in os.listdir(class_dir):
+        img_path = os.path.join(class_dir, img_file)
+        try:
+            # Load the image in grayscale
+            img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
 
-# Apply binary thresholding to convert the image to a binary image
-_, binary = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+            if img is None:
+                print(f"Error: Image not found or unable to load: {img_path}")
+                exit()
 
-# Find contours in the binary image
-contours, _ = cv2.findContours(
-    binary, 
-    cv2.RETR_EXTERNAL, 
-    cv2.CHAIN_APPROX_SIMPLE)
+            # Apply binary thresholding to convert the image to a binary image
+            _, binary = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
 
-# Select the largest contour based on area
-contour = max(contours, key=cv2.contourArea)
+            # Find contours in the binary image
+            contours, _ = cv2.findContours(
+            binary, 
+            cv2.RETR_EXTERNAL, 
+            cv2.CHAIN_APPROX_SIMPLE)
 
-area = cv2.contourArea(contour)
-perimeter = cv2.arcLength(contour, True)
+            # Select the largest contour based on area
+            contour = max(contours, key=cv2.contourArea)
 
-x,y,w,h = cv2.boundingRect(contour)
-aspect_ratio = float(w)/h
+            area = cv2.contourArea(contour)
+            perimeter = cv2.arcLength(contour, True)
 
-circularity = (4 * np.pi * area) / (perimeter ** 2)
+            x,y,w,h = cv2.boundingRect(contour)
+            aspect_ratio = float(w)/h
 
-epsilon = 0.02 * perimeter
-approx = cv2.approxPolyDP(contour, epsilon, True)
-vertices = len(approx)
+            circularity = (4 * np.pi * area) / (perimeter ** 2)
 
-feature_vector = [
-    area, 
-    perimeter, 
-    aspect_ratio, 
-    circularity, 
-    vertices]
+            epsilon = 0.02 * perimeter
+            approx = cv2.approxPolyDP(contour, epsilon, True)
+            vertices = len(approx)
 
-print("Feature Vector:", feature_vector)
+            feature_vector = [
+            area, 
+            perimeter, 
+            aspect_ratio, 
+            circularity, 
+            vertices]
 
+            X_train.append(feature_vector)
+            y_train.append(class_name)
+        except:
+            pass
+
+X_train = np.array(X_train)
+y_train = np.array(y_train)
+print(f"X_train: {X_train.shape}, y_train: {y_train.shape}")
